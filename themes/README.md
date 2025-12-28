@@ -1,1 +1,1 @@
-Individual themes has to be mounted to container separatelly.
+Individual themes must be mounted to the container separately via docker-compose.yml volumes.
