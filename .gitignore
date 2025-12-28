@@ -1,0 +1,5 @@
+/docker/mysql/data/
+
+# OS
+.DS_Store
+Thumbs.db
