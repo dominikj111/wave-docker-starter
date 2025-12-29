@@ -82,18 +82,18 @@ php artisan storage:link 2>/dev/null || echo "ℹ️  Storage link already exist
 #     echo "ℹ️  Home page already exists"
 # fi
 
-# # Activate custom theme if it exists
-# if [ -d "/var/www/html/resources/themes/custom" ]; then
-#     echo "🎨 Activating custom theme..."
-#     php artisan tinker --execute="
-#         DB::table('themes')->update(['active' => 0]);
-#         DB::table('themes')->updateOrInsert(
-#             ['folder' => 'custom'],
-#             ['name' => 'Custom Theme', 'active' => 1, 'version' => 1.0]
-#         );
-#         echo 'Custom theme activated';
-#     " 2>/dev/null || echo "⚠️  Could not activate custom theme (will use default)"
-# fi
+# Activate custom theme if it exists
+if [ -d "/var/www/html/resources/themes/custom" ]; then
+    echo "🎨 Activating custom theme..."
+    php artisan tinker --execute="
+        DB::table('themes')->update(['active' => 0]);
+        DB::table('themes')->updateOrInsert(
+            ['folder' => 'custom'],
+            ['name' => 'Custom Theme', 'active' => 1, 'version' => 1.0]
+        );
+        echo 'Custom theme activated';
+    " 2>/dev/null || echo "⚠️  Could not activate custom theme (will use default)"
+fi
 
 # Fix permissions (in case volumes are mounted)
 echo "🔒 Setting proper permissions..."

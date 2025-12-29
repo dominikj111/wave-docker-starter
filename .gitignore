@@ -3,3 +3,7 @@
 # OS
 .DS_Store
 Thumbs.db
+
+
+# Theme
+themes/anchor
