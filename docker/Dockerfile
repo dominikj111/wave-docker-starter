@@ -51,15 +51,6 @@ RUN composer install --no-dev --optimize-autoloader
 # Install npm dependencies and build
 RUN npm install && npm run build
 
-WORKDIR /var/www/html/resources/plugins/component-catalog/ui
-
-# Install plugins npm dependencies and build
-RUN npm install && npm run build
-
-WORKDIR /var/www/html
-
-RUN php artisan vendor:publish --tag=component-catalog-assets --force
-
 # Copy .env.example to .env (will be updated by entrypoint)
 RUN cp .env.example .env
 

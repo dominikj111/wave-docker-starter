@@ -87,6 +87,39 @@ if [ -d "/var/www/html/resources/themes" ]; then
     chown -R www-data:www-data /var/www/html/resources/themes
 fi
 
+# Build and publish plugin assets if needed
+PLUGIN_UI_DIR="/var/www/html/resources/plugins/component-catalog/ui"
+if [ -d "$PLUGIN_UI_DIR" ]; then
+    echo "🔌 Checking component-catalog plugin assets..."
+    
+    # Check if dist folder is missing or empty
+    if [ ! -d "$PLUGIN_UI_DIR/dist" ] || [ -z "$(ls -A $PLUGIN_UI_DIR/dist 2>/dev/null)" ]; then
+        echo "📦 Building component-catalog plugin (dist folder missing or empty)..."
+        cd "$PLUGIN_UI_DIR"
+        
+        rm -rf node_modules # there may be binary clash when installed on host machine (MacOs)
+
+        # Install dependencies if node_modules doesn't exist
+        if [ ! -d "node_modules" ]; then
+            echo "   Installing npm dependencies..."
+            npm install
+        fi
+        
+        # Build the plugin
+        echo "   Building React SPA..."
+        npm run build
+        
+        cd /var/www/html
+        echo "✅ Plugin built successfully"
+    else
+        echo "ℹ️  Plugin assets already built - skipping build"
+    fi
+    
+    # Always publish assets to public directory
+    echo "📤 Publishing component-catalog assets..."
+    php artisan vendor:publish --tag=component-catalog-assets --force 2>/dev/null || echo "⚠️  Could not publish plugin assets"
+fi
+
 # Clear caches
 echo "🧹 Clearing application caches..."
 php artisan config:clear
@@ -108,7 +141,8 @@ echo "   Database:     ${DB_DATABASE}@${DB_HOST}"
 echo "   phpMyAdmin:   http://localhost:8081 (auto-login)"
 echo "   Mailpit:      http://localhost:8025 (email testing)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "🚀 Starting PHP-FPM and Nginx..."
 
 # Start supervisord to manage PHP-FPM and Nginx
-echo "🚀 Starting supervisord..."
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

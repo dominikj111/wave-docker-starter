@@ -12,6 +12,8 @@ services:
     volumes:
       - ./plugins:/var/www/html/resources/plugins
       - ./themes/custom:/var/www/html/resources/themes/custom
+      - ./config/devdojo:/var/www/html/config/devdojo
+      - ./public/assets:/var/www/html/public/assets
       - ./docker/nginx/default.conf:/etc/nginx/sites-available/default:ro
       - ./docker/supervisor/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
       - ./docker/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro

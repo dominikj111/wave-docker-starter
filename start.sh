@@ -169,9 +169,32 @@ fi
 echo ""
 print_success "Docker containers are starting up..."
 
-# Wait for application to be ready
+# Wait for application to be ready (check for FPM ready signal)
 print_info "Waiting for application to be ready..."
-sleep 5
+MAX_WAIT=120  # Maximum wait time in seconds
+ELAPSED=0
+READY=false
+
+while [ $ELAPSED -lt $MAX_WAIT ]; do
+    if docker compose logs app 2>/dev/null | grep -q "fpm is running"; then
+        READY=true
+        break
+    fi
+    sleep 2
+    ELAPSED=$((ELAPSED + 2))
+    
+    # Show progress every 10 seconds
+    if [ $((ELAPSED % 10)) -eq 0 ]; then
+        print_info "Still waiting... (${ELAPSED}s elapsed)"
+    fi
+done
+
+if [ "$READY" = true ]; then
+    print_success "Application is ready!"
+else
+    print_warning "Timeout waiting for application (waited ${MAX_WAIT}s)"
+    print_info "Application may still be initializing. Check logs with: docker compose logs -f app"
+fi
 
 # Check if containers are running
 if docker compose ps | grep -q "Up"; then
