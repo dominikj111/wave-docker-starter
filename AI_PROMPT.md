@@ -268,6 +268,79 @@ When assisting with this project:
 - Change ports via environment variables
 - Restart with `docker compose down && docker compose up -d`
 
+### Wave Plugin Development
+
+**Creating Plugins:**
+
+```bash
+# Generate plugin skeleton
+docker compose exec app php artisan plugin:create plugin-name
+
+# Plugin structure:
+plugins/plugin-name/
+├── PluginNamePlugin.php    # Main plugin class (StudlyCase + Plugin.php)
+├── version.json
+├── plugin.jpg
+├── resources/views/
+├── routes/web.php
+└── src/Components/
+```
+
+**Plugin Naming Convention:**
+
+- Folder name: `plugin-name` (lowercase with hyphens)
+- Class name: `PluginNamePlugin` (StudlyCase + "Plugin" suffix)
+- Namespace: `Wave\Plugins\PluginName\PluginNamePlugin`
+
+**Activating Plugins:**
+
+- Add folder name to `plugins/installed.json`: `["plugin-name"]`
+- Or activate via admin panel at `/admin/plugins`
+- Restart container to load: `docker compose restart app`
+
+**Plugin Class Structure:**
+
+```php
+class PluginNamePlugin extends Plugin
+{
+    protected $name = 'PluginName';
+    protected $description = 'Plugin description';
+
+    public function register(): void
+    {
+        // Matches parent signature - typically empty
+    }
+
+    public function boot(): void
+    {
+        // Register views, routes, components
+        // Add service provider logic here
+    }
+
+    public function getPostActivationCommands(): array
+    {
+        return ['view:clear', 'config:clear'];
+    }
+
+    public function getPluginInfo(): array
+    {
+        return [
+            'name' => $this->name,
+            'description' => $this->description,
+            'version' => $this->getPluginVersion()
+        ];
+    }
+}
+```
+
+**Important Notes:**
+
+- Plugins extend `Wave\Plugins\Plugin` (which extends `ServiceProvider`)
+- `register()` and `boot()` must match parent signatures with `: void` return type
+- Plugins are loaded from `resources/plugins/` directory
+- Plugin files are bind-mounted, changes reflect immediately
+- Use `Log::info()` for debugging plugin behavior
+
 ### Custom Additions
 
 - Whenever you have questions to confirm, stop and wait until I answer; do not presume.
