@@ -10,7 +10,7 @@ class AdminMenu extends Component
 
     public function mount($category = null)
     {
-        $this->message = 'Hello World';
+        $this->message = 'Hello World (dynamic)';
     }
 
     public function render()

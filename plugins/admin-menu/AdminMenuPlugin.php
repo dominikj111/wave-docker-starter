@@ -26,28 +26,40 @@ class AdminMenuPlugin extends Plugin
 
         Livewire::component('admin-menu', \Wave\Plugins\AdminMenu\Components\AdminMenu::class);
 
+        // Publish SPA assets to public directory
+        $this->publishes([
+            __DIR__ . '/ui/dist' => public_path('plugins/admin-menu'),
+        ], 'admin-menu-assets');
+
         // Register custom admin navigation items
         $this->registerAdminNavigation();
     }
 
     protected function registerAdminNavigation(): void
     {
-        // Register navigation items for the admin panel
-        Filament::serving(function () {
-            Filament::registerNavigationItems([
-                NavigationItem::make('Custom Link')
-                    ->url('/admin/custom-page', shouldOpenInNewTab: false)
-                    ->icon('heroicon-o-star')
-                    ->group('Custom')
-                    ->sort(100),
-                    
-                NavigationItem::make('External Link')
-                    ->url('https://devdojo.com/wave/docs', shouldOpenInNewTab: true)
-                    ->icon('heroicon-o-globe-alt')
-                    ->group('Custom')
-                    ->sort(101),
-            ]);
-        });
+        // Use configuring callback to add navigation items before panel is finalized
+        try {
+            $panel = Filament::getPanel('admin');
+            
+            if ($panel) {
+                $panel->navigationItems([
+                    NavigationItem::make('Custom Page')
+                        ->url('/admin/custom-page', shouldOpenInNewTab: false)
+                        ->icon('heroicon-o-star')
+                        ->group('Custom')
+                        ->sort(100)
+                        ->isActiveWhen(fn () => request()->is('admin/custom-page')),
+                        
+                    NavigationItem::make('External Link')
+                        ->url('https://devdojo.com/wave/docs', shouldOpenInNewTab: true)
+                        ->icon('heroicon-o-globe-alt')
+                        ->group('Custom')
+                        ->sort(101),
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Panel might not be available yet
+        }
     }
 
     public function getPluginInfo(): array
@@ -62,5 +74,42 @@ class AdminMenuPlugin extends Plugin
     public function getPluginVersion(): array
     {
         return File::json(__DIR__ . '/version.json');
+    }
+
+    public function getPostActivationCommands(): array
+    {
+        return [
+            'vendor:publish --tag=admin-menu-assets --force',
+        ];
+    }
+
+    /**
+     * Get the main JS asset file from the dist directory
+     * Automatically detects the hashed filename (returns newest file)
+     */
+    public static function getSpaAsset(): ?string
+    {
+        $assetsPath = public_path('plugins/admin-menu/assets');
+        
+        if (!File::isDirectory($assetsPath)) {
+            return null;
+        }
+
+        // Find all main JS files (index-*.js)
+        $files = File::glob($assetsPath . '/index-*.js');
+        
+        if (empty($files)) {
+            return null;
+        }
+
+        // Sort by modification time (newest first)
+        usort($files, function($a, $b) {
+            return filemtime($b) - filemtime($a);
+        });
+
+        // Get the filename without the full path
+        $filename = basename($files[0]);
+        
+        return 'plugins/admin-menu/assets/' . $filename;
     }
 }
