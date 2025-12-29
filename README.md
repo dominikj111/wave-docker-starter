@@ -8,7 +8,7 @@ Docker-based development environment for [Wave SaaS](https://github.com/thedevdo
 
 - Clones Wave core during Docker build (v3.1.2 by default)
 - Keeps Wave core pristine inside containers for clean upgrades
-- Mounts only `plugins/` and `themes/` for development
+- Bind-mounts `plugins/`, `themes/custom/`, `config/`, and `public/assets/` for safe customization
 - Provides complete stack: PHP 8.2, Nginx, MariaDB, phpMyAdmin, Mailpit
 
 **Key principle:** Wave core is **never modified** - all customization happens in plugins and themes.
@@ -47,7 +47,7 @@ wave_saas/
 └── README.md
 ```
 
-**Note:** Wave core lives at `/var/www/html` inside the container and is **not** bind-mounted.
+**Note:** Wave core lives at `/var/www/html` inside the container and is **not** bind-mounted. Only the customization surfaces listed above are mounted in so upgrades remain painless.
 
 ## Environment Control
 
@@ -100,6 +100,9 @@ docker compose down
 
 # Fresh start (removes all data including database)
 docker compose down -v && rm -rf docker/mysql/data
+
+# Cleaning repo to "fresh clone" state (removes untracked files!)
+git clean -fdx && git reset --hard origin/main
 ```
 
 ### Laravel/Artisan Commands
@@ -187,10 +190,13 @@ Plugins are available at `/var/www/html/resources/plugins/` inside container.
 
 - Updates Wave's `.env` with docker-compose environment variables
 - Waits for MariaDB readiness
+- Builds/publishes Component Catalog plugin assets if `dist/` is missing
 - Runs migrations and seeds (first time only)
 - Fixes permissions for bind-mounted volumes
 - Clears and rebuilds Laravel caches
-- Starts supervisord (PHP-FPM + Nginx)
+- Starts supervisord (PHP-FPM + Nginx) and logs completion (`fpm is running`)
+
+The `start.sh` helper waits until the container logs contain `fpm is running`, so you always know when initialization (including `npm install` inside the container) is complete.
 
 **On Restart:**
 
@@ -222,10 +228,18 @@ export APP_PORT=9000
 docker compose down && docker compose up -d
 ```
 
-**Fresh install:**
+**Fresh install / hard reset:**
 
 ```bash
+# Remove containers and volumes
 ./start.sh --fresh
+
+# Or manually
+docker compose down -v
+rm -rf docker/mysql/data
+
+# Wipe untracked files (returns repo to clean-clone state!)
+git clean -fdx
 ```
 
 ## Contributing
