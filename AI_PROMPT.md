@@ -346,6 +346,7 @@ class PluginNamePlugin extends Plugin
 - Whenever you have questions to confirm, stop and wait until I answer; do not presume.
 - Always verify the project structure by reading README.md before making suggestions.
 - **Wave core is untouchable** - no modifications whatsoever. This is critical for upgrade safety and the entire architecture depends on it.
+- Do not make markdown explanation of code changes and do not note into markdown the chat interaction.
 
 ---
 
