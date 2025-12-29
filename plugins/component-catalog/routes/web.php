@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Wave\Plugins\AdminMenu\Pages\CustomPage;
+use Wave\Plugins\ComponentCatalog\Pages\CustomPage;
 
 Route::middleware(['web'])->group(function () {
-    Route::view('admin-menu', 'admin-menu::home')->name('admin-menu');
-    Route::get('admin-menu/component', \Wave\Plugins\AdminMenu\Components\AdminMenu::class)->name('admin-menu.component');
+    Route::view('component-catalog', 'component-catalog::home')->name('component-catalog');
+    Route::get('component-catalog/component', \Wave\Plugins\ComponentCatalog\Components\ComponentCatalog::class)->name('component-catalog.component');
 });
 
 // Admin routes with Filament middleware

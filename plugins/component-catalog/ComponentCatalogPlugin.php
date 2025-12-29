@@ -1,6 +1,6 @@
 <?php
 
-namespace Wave\Plugins\AdminMenu;
+namespace Wave\Plugins\ComponentCatalog;
 
 use Livewire\Livewire;
 use Wave\Plugins\Plugin;
@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\File;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 
-class AdminMenuPlugin extends Plugin
+class ComponentCatalogPlugin extends Plugin
 {
-    protected $name = 'AdminMenu';
+    protected $name = 'ComponentCatalog';
 
-    protected $description = 'Admin Menu Items';
+    protected $description = 'React Component Catalog with Headless UI';
 
     public function register(): void
     {
@@ -21,15 +21,15 @@ class AdminMenuPlugin extends Plugin
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/resources/views', 'admin-menu');
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'component-catalog');
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
 
-        Livewire::component('admin-menu', \Wave\Plugins\AdminMenu\Components\AdminMenu::class);
+        Livewire::component('component-catalog', \Wave\Plugins\ComponentCatalog\Components\ComponentCatalog::class);
 
         // Publish SPA assets to public directory
         $this->publishes([
-            __DIR__ . '/ui/dist' => public_path('plugins/admin-menu'),
-        ], 'admin-menu-assets');
+            __DIR__ . '/ui/dist' => public_path('plugins/component-catalog'),
+        ], 'component-catalog-assets');
 
         // Register custom admin navigation items
         $this->registerAdminNavigation();
@@ -79,7 +79,7 @@ class AdminMenuPlugin extends Plugin
     public function getPostActivationCommands(): array
     {
         return [
-            'vendor:publish --tag=admin-menu-assets --force',
+            'vendor:publish --tag=component-catalog-assets --force',
         ];
     }
 
@@ -89,7 +89,7 @@ class AdminMenuPlugin extends Plugin
      */
     public static function getSpaAsset(): ?string
     {
-        $assetsPath = public_path('plugins/admin-menu/assets');
+        $assetsPath = public_path('plugins/component-catalog/assets');
         
         if (!File::isDirectory($assetsPath)) {
             return null;
@@ -110,6 +110,6 @@ class AdminMenuPlugin extends Plugin
         // Get the filename without the full path
         $filename = basename($files[0]);
         
-        return 'plugins/admin-menu/assets/' . $filename;
+        return 'plugins/component-catalog/assets/' . $filename;
     }
 }

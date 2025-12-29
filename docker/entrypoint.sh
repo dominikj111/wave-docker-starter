@@ -61,27 +61,6 @@ fi
 echo "🔗 Creating storage symlink..."
 php artisan storage:link 2>/dev/null || echo "ℹ️  Storage link already exists"
 
-# Ensure home page exists (required for Wave routing)
-# echo "🏠 Checking for home page..."
-# HOME_PAGE_EXISTS=$(php artisan tinker --execute="echo \Wave\Page::where('slug', '')->count();" 2>/dev/null | tr -d '[:space:]' || echo "0")
-
-# if [[ "$HOME_PAGE_EXISTS" =~ ^[0-9]+$ ]] && [[ "$HOME_PAGE_EXISTS" -eq 0 ]]; then
-#     echo "📄 Creating home page..."
-#     php artisan tinker --execute="
-#         \Wave\Page::create([
-#             'slug' => '',
-#             'title' => 'Home',
-#             'body' => '<h1>Welcome to Wave</h1><p>Your SaaS application is ready!</p>',
-#             'meta_description' => 'Welcome to your Wave application',
-#             'status' => 'ACTIVE',
-#             'author_id' => 1
-#         ]);
-#         echo 'Home page created';
-#     " 2>/dev/null && echo "✅ Home page created successfully" || echo "⚠️  Could not create home page"
-# else
-#     echo "ℹ️  Home page already exists"
-# fi
-
 # Activate custom theme if it exists
 if [ -d "/var/www/html/resources/themes/custom" ]; then
     echo "🎨 Activating custom theme..."

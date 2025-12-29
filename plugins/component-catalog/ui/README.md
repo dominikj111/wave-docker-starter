@@ -26,7 +26,7 @@ A React-based component catalog demonstrating Headless UI integration within Wav
 ### Prerequisites
 
 ```bash
-cd plugins/admin-menu/ui
+cd plugins/component-catalog/ui
 npm install
 ```
 
@@ -151,7 +151,7 @@ npm run build && npm run deploy
 **SPA not loading?**
 
 ```bash
-php artisan vendor:publish --tag=admin-menu-assets --force
+php artisan vendor:publish --tag=component-catalog-assets --force
 php artisan view:clear
 ```
 

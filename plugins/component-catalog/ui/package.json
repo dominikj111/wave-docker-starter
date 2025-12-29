@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "deploy": "docker compose exec app sh -c 'php artisan vendor:publish --tag=admin-menu-assets --force && php artisan view:clear'",
+    "deploy": "docker compose exec app sh -c 'php artisan vendor:publish --tag=component-catalog-assets --force && php artisan view:clear'",
     "lint": "eslint .",
     "preview": "vite preview"
   },

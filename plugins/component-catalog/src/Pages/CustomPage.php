@@ -1,6 +1,6 @@
 <?php
 
-namespace Wave\Plugins\AdminMenu\Pages;
+namespace Wave\Plugins\ComponentCatalog\Pages;
 
 use BackedEnum;
 use Filament\Pages\Page;
@@ -14,7 +14,7 @@ class CustomPage extends Page
     // Hide from navigation since we're adding it via the plugin
     protected static bool $shouldRegisterNavigation = false;
 
-    protected string $view = 'admin-menu::filament.custom-page';
+    protected string $view = 'component-catalog::filament.custom-page';
 
     public static function getNavigationLabel(): string
     {

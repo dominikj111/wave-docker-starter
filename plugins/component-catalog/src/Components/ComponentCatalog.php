@@ -1,10 +1,10 @@
 <?php
 
-namespace Wave\Plugins\AdminMenu\Components;
+namespace Wave\Plugins\ComponentCatalog\Components;
 
 use Livewire\Component;
 
-class AdminMenu extends Component
+class ComponentCatalog extends Component
 {
     public $message;
 
@@ -17,6 +17,6 @@ class AdminMenu extends Component
     {
         $layout = (auth()->guest()) ? 'theme::components.layouts.marketing' : 'theme::components.layouts.app';
         
-        return view('admin-menu::livewire.admin-menu')->layout($layout);
+        return view('component-catalog::livewire.component-catalog')->layout($layout);
     }
 }
